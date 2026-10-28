@@ -1,0 +1,163 @@
+/* הדף הראשי: יומן מסע מצויר ביד.
+   הגופנים של כתב היד, הפילטר wobble והמחברת עצמה מגיעים מ-notebook.css ו-notebook.js */
+
+/* Fredoka לכותרת (עגול וקריא), Rubik 800 לפס (שמן, מתאים לאותיות קופצות) */
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Rubik:wght@800&display=swap");
+
+body {
+    font-family: "Please Write Me A Song", "Playpen Sans Hebrew", cursive;
+    color: #2a1a10;                  /* דיו חום-כהה, כמו בקווי המחברת */
+    background: #efe6da url("paper.svg") center / cover fixed;
+    overflow-x: hidden;              /* הפס רחב מהמסך, בלי פס גלילה לרוחב */
+}
+
+/* רקע ומסגרת בשכבה נפרדת מאחורי התוכן: רק הם מתעקמים, והטקסט והתמונות נשארים חדים */
+.box::before,
+.line::before,
+.card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--bg);
+    filter: url(#wobble) drop-shadow(4px 8px 6px rgba(0, 0, 0, 0.18));
+}
+
+/* קופסת הכותרת: פתק צהוב מוטה */
+.box {
+    position: relative;
+    isolation: isolate;              /* ה-::before נשאר מאחורי הטקסט, אבל בתוך הקופסה */
+    width: fit-content;
+    margin: 40px auto;
+    padding: 23px 49px 19px;
+    transform: rotate(-1.5deg);
+}
+.box::before {
+    --bg: #ffde59;
+    border: 5px solid #000;
+}
+h1 {
+    margin: 0;
+    font-family: "Fredoka", "Playpen Sans Hebrew", cursive;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+/* הפס הירוק המוטה. הטקסט בתוכו זז, ואותיותיו קופצות, ב-banner.js.
+   אין חיתוך, כדי שאות שגדלה תוכל לצאת מהפס. הפס רחב מהמסך ב-10vw מכל צד,
+   ולכן הטקסט שנכנס ויוצא בצדדים נמצא ממילא מחוץ למסך */
+.line {
+    position: relative;
+    isolation: isolate;
+    z-index: 1;                      /* אותיות שיוצאות מהפס עוברות מעל הקופסה והתמונות */
+    width: 120vw;
+    height: 60px;
+    margin: 120px 0 0 -10vw;
+    transform: translateY(-50px) rotate(-5deg);
+}
+.line::before {
+    --bg: #9fe39a;
+    border-top: 4px solid #000;
+    border-bottom: 4px solid #000;
+    filter: url(#wobble) drop-shadow(0 6px 6px rgba(0, 0, 0, 0.15));
+}
+.line .track {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    transform: translateX(100vw);    /* מחוץ לפס עד שהסקריפט מתחיל */
+}
+.line p {
+    margin: 0;
+    font-family: "Rubik", "Playpen Sans Hebrew", sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+/* כל אות בקופסה משלה. banner.js מצייר אותה גדולה ומקטין אותה, כדי שתהיה חדה כשהיא קופצת */
+.line .letter {
+    position: relative;              /* מאפשר z-index: האות שקופצת מעל השכנות */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: top;
+}
+
+/* המשולשים ברקע, שעוקבים אחרי העכבר (script.js) */
+.pattern {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.12;
+}
+
+/* שתי תמונות משמאל, ומחברת גבוהה מימין */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "img1 text"
+        "img2 text";
+    column-gap: 64px;
+    row-gap: 40px;
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+.img1 { grid-area: img1; --tilt: -1.6deg; }
+.img2 { grid-area: img2; --tilt: 1.1deg; }
+.text { grid-area: text; }
+.layout .pad {
+    align-self: start;               /* שומר על הגובה שלו, ולא נמתח לגובה של שתי התמונות */
+    margin-left: 24px;               /* מקום לטבעות, כדי שלא יעלו על התמונות */
+    --tilt: 1.2deg;
+}
+
+/* פולארויד מודבק בסלוטייפ: תמונה למעלה, כיתוב מתחתיה */
+.card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 18px;
+    font-size: 22px;
+    text-align: center;
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.3s ease;
+}
+.card:hover { transform: rotate(0deg) translateY(-6px); }
+.card::after {
+    --bg: #fff;
+    border: 4px solid #000;
+}
+.card::before {                      /* הסלוטייפ */
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    z-index: 1;
+    width: 90px;
+    height: 26px;
+    background: rgba(255, 246, 170, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transform: translateX(-50%) rotate(-3deg);
+}
+.card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;               /* ממלא את המסגרת בלי למתוח את התמונה */
+    border: 2px solid #000;
+}
+/* פסל החירות הוא תמונה לגובה: מסגרת ריבועית, צמודה לתחתית כדי שהפנים והגוף ייראו */
+.img2 img {
+    aspect-ratio: 1 / 1;
+    object-position: 50% 100%;
+}

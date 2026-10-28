@@ -1,0 +1,183 @@
+/* מחברת קרטונית: פנקס עם ספירלה, שורות לכתיבה ותיבות סימון.
+   משתמשים בה כך: <section class="pad pink"><textarea dir="auto"></textarea></section>
+   וטוענים גם את notebook.js */
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans+Hebrew&display=swap");
+
+/* גופן כתב יד מקובץ בתיקייה fonts */
+@font-face {
+  font-family: "Please Write Me A Song";
+  src: url("fonts/Please write me a song.ttf") format("truetype");
+  font-display: swap;
+  size-adjust: 140%;   /* האותיות בגופן הזה קטנות; מגדיל רק אותו כדי שיתאים לעברית */
+}
+
+.pad {
+  position: relative;
+  aspect-ratio: 385 / 255;       /* גובה מינימלי; הפנקס גדל אם הטקסט ארוך יותר */
+  container-type: inline-size;   /* מאפשר ליחידה cqw למדוד את רוחב הפנקס */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 13% 14% 13% 18%;      /* מרווח בין השורות למסגרת המקווקוות */
+  /* תחושה של נייר: כל פנקס מוטה קצת, ומתיישר ועולה כשהעכבר עליו */
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.3s ease;   /* קטנה ואיטית, ולכן לא מכבים אותה ב-prefers-reduced-motion */
+}
+.pad:hover {
+  transform: rotate(0deg) translateY(-6px);
+}
+.pad:focus-within {
+  transform: rotate(0deg);       /* בזמן כתיבה הפנקס ישר ולא זז */
+}
+/* הדף עצמו: צבע ומסגרת שחורה עבה, קצת עקומה כמו ציור ביד.
+   הוא בשכבה מעל .spiral-back, ולכן מסתיר את קצה הטבעות */
+.pad::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper);
+  border: 5px solid #000;
+  filter: url(#wobble) drop-shadow(4px 8px 6px rgba(0, 0, 0, 0.18));   /* צל רך מתחת לדף */
+}
+.pad:hover::before {
+  filter: url(#wobble) drop-shadow(6px 14px 10px rgba(0, 0, 0, 0.22));
+}
+/* מסגרת פנימית מקווקוות, מצוירת בסקריפט: מקפים עבים בפינות, דקים באמצע, וקצת גליים.
+   cqw = אחוז מרוחב הפנקס, כמו ה-padding, כדי שהמרווח לא ישתנה כשהפנקס גדל לגובה */
+.frame {
+  position: absolute;
+  inset: 8cqw 8cqw 8cqw 12cqw;
+  width: calc(100% - 20cqw);
+  height: calc(100% - 16cqw);
+  overflow: visible;
+  pointer-events: none;
+  /* צבע המקפים: גוון כהה של צבע הדף, ולא שחור */
+  --frame-ink: color-mix(in srgb, var(--paper) 30%, #3b2a22);            /* גיבוי לדפדפנים ישנים */
+  --frame-ink: oklch(from var(--paper) calc(l * 0.45) calc(c * 1.8) h);  /* אותו גוון, כהה ורווי יותר */
+}
+
+/* כותרת: אותו גופן כמו הכתיבה, עם קו גלי מצויר ביד מתחתיה */
+.pad h2 {
+  position: relative;
+  z-index: 1;
+  width: fit-content;            /* הקו ברוחב הכותרת בלבד */
+  margin: 0 auto 4cqw;           /* מרווח בין הכותרת לשורה הראשונה */
+  padding: 0 1.5cqw;
+  min-width: 30cqw;              /* נשאר מקום ללחוץ גם כשהכותרת ריקה */
+  text-align: center;
+  outline: none;
+  cursor: text;
+  font-family: "Please Write Me A Song", "Playpen Sans Hebrew", cursive;
+  font-weight: 400;
+  font-size: max(22px, 9cqw);
+  line-height: 1.1;
+  color: #222;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C25 3.5 45 7.5 65 5 S92 4 98 5.5' fill='none' stroke='%232a1a10' stroke-width='2.2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 50% calc(100% - 0.02em) / 100% 1.8cqw;   /* הקו בקו הבסיס של האותיות */
+  filter: url(#ink-wave);
+}
+/* טקסט אפור כשהכותרת ריקה */
+.pad h2:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.35);
+}
+
+/* טבעות הספירלה, צמודות לצד שמאל של הפנקס */
+.spiral {
+  position: absolute;
+  left: -9%;
+  top: 2%;
+  height: 96%;
+  width: 19%;
+  z-index: 2;
+}
+.spiral-back {
+  z-index: -1;
+}
+
+/* עוטף את השורות ואת תיבות הסימון, כדי שהעיקום יחול על כולם יחד */
+.sheet {
+  --fs: max(18px, 7.5cqw);              /* גודל האות: לא פחות מ-18px, גם בפנקס קטן */
+  --line: calc(var(--fs) * 1.25 + 8px); /* גובה האות + 8px רווח בין השורות */
+  position: relative;
+  z-index: 1;
+  flex: 1 0 auto;                /* ממלא את הפנקס, ויכול לגדול */
+  display: flex;
+  filter: url(#ink-wave);
+}
+
+/* שורות של מחברת שאפשר לכתוב עליהן */
+.pad textarea {
+  flex: 1;
+  min-height: calc(var(--line) * 3);
+  overflow: hidden;              /* בלי פס גלילה; הגובה גדל בסקריפט */
+  box-sizing: border-box;
+  padding: 0 2cqw;
+  padding-inline-start: calc(var(--fs) * 1.3);   /* מקום לתיבת הסימון */
+  border: none;
+  outline: none;
+  resize: none;
+  background-color: transparent;
+  /* קווים מצוירים ביד: אריח SVG עם 4 קווים גליים שונים, שחוזר לאורך הפנקס.
+     non-scaling-stroke שומר על עובי קו קבוע גם כשהאריח נמתח */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%234f5a3a' stroke-opacity='0.75' stroke-width='1.4' stroke-linecap='round' vector-effect='non-scaling-stroke'%3E%3Cpath vector-effect='non-scaling-stroke' d='M2 9.5 C40 8.9 80 9.9 120 9.3 S180 8.7 198 9.4'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M4 19.4 C50 20 90 19 140 19.6 S185 20 196 19.2'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M1 29.5 C45 28.9 100 30 150 29.3 S190 29.7 199 29.6'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M3 39.2 C60 39.8 110 38.9 160 39.5 S188 39.3 197 39.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% calc(var(--line) * 4);
+  /* מרים את הקווים לקו הבסיס של האותיות, כדי שהטקסט יישב עליהם ולא ירחף מעליהם */
+  background-position: 0 calc(-3px - 0.12em);
+  background-attachment: local;  /* השורות זזות יחד עם הטקסט כשגוללים */
+  /* אם לגופן הראשון אין אות מסוימת (למשל עברית), הדפדפן לוקח אותה מהבא ברשימה */
+  font-family: "Please Write Me A Song", "Playpen Sans Hebrew", cursive;
+  font-size: var(--fs);
+  line-height: var(--line);       /* הטקסט יושב בדיוק על השורות */
+  color: #222;
+}
+
+/* העתק בלתי נראה של הטקסט, רק כדי למדוד איפה כל שורה נמצאת */
+.mirror {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  font-family: "Please Write Me A Song", "Playpen Sans Hebrew", cursive;
+  font-size: var(--fs);
+  line-height: var(--line);
+  box-sizing: border-box;
+}
+.marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* עיגול מצויר ביד בתחילת כל שורה */
+.check {
+  position: absolute;
+  width: calc(var(--fs) * 0.75);
+  height: calc(var(--fs) * 0.75);
+  padding: 0;
+  border: 2px solid #2a1a10;
+  border-radius: 50% 45% 55% 48%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.check:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+.check.done::after {
+  content: "";
+  position: absolute;
+  inset: -35% -25% 5% 5%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M3 11 L8 16 L18 2' fill='none' stroke='%232a1a10' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* קו מחיקה מצויר ביד על שורה שסומנה */
+.strike {
+  position: absolute;
+  height: calc(var(--fs) * 0.35);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M1 6 C20 3 40 8 60 5 S90 4 99 6' fill='none' stroke='%232a1a10' stroke-width='2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+}
+.red    { --paper: #fdacb0; }
+.cyan   { --paper: #abecec; }
+.yellow { --paper: #f9e07c; }
+.pink   { --paper: #f8b4d9; }

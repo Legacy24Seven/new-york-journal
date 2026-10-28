@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יומן מסע: ניו יורק</title>
+    <link rel="stylesheet" href="notebook.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas class="pattern"></canvas>
+
+    <div class="box">
+        <h1 dir="rtl">יומן מסע: ניו יורק</h1>
+    </div>
+
+    <!-- פס שנע: הטקסט נכנס מימין, נעצר באמצע, ויוצא שמאלה (banner.js) -->
+    <div class="line">
+        <div class="track">
+            <p dir="rtl">התפוח הגדול • מנהטן • ברוקלין • סנטרל פארק • טיימס סקוור</p>
+        </div>
+    </div>
+
+    <section class="layout">
+        <figure class="card img1">
+            <img src="image/new-york.jpg" alt="קו הרקיע של ניו יורק עם האמפייר סטייט בילדינג">
+            <figcaption>ניו יורק</figcaption>
+        </figure>
+        <figure class="card img2">
+            <img src="image/statue-of-liberty.jpg" alt="פסל החירות מחזיק את הלפיד">
+            <figcaption>פסל החירות</figcaption>
+        </figure>
+        <section class="pad pink text">
+            <h2 contenteditable="plaintext-only" dir="auto" spellcheck="false" data-placeholder="כותרת">ניו יורק</h2>
+            <textarea dir="auto" spellcheck="false" aria-label="הערות">העיר הגדולה בארצות הברית, כ-8 מיליון תושבים
+
+מחולקת ל-5 רובעים: מנהטן, ברוקלין, קווינס, הברונקס וסטטן איילנד
+
+הכינוי שלה: "התפוח הגדול"
+
+האמפייר סטייט בילדינג נפתח ב-1931
+
+פסל החירות היה מתנה מצרפת, ונחנך ב-1886
+
+סנטרל פארק גדול יותר ממדינת מונקו
+
+הרכבת התחתית פועלת 24 שעות ביממה
+
+מדברים בה מאות שפות שונות</textarea>
+        </section>
+    </section>
+
+    <!-- notebook.js קודם: הוא מוסיף את הפילטר wobble שגם הכותרת והפולארוידים משתמשים בו -->
+    <script src="notebook.js"></script>
+    <script src="script.js"></script>
+    <script src="banner.js"></script>
+</body>
+</html>

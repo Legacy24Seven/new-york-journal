@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes Board</title>
+  <link rel="stylesheet" href="notebook.css">
+  <style>
+    body {
+      margin: 0;
+      /* נייר משבצות: שני מעברי צבע, אחד לקווים אופקיים ואחד לאנכיים */
+      background-color: #fff;
+      background-image:
+        linear-gradient(#dcdcdc 1px, transparent 1px),
+        linear-gradient(90deg, #dcdcdc 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    .board {
+      position: relative;
+      max-width: 736px;
+      margin: 0 auto;
+      padding: 30px 0;
+    }
+
+    /* פסי מרקר בשני הצדדים */
+    .strokes {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: -1;   /* מאחורי הפנקסים והטבעות */
+    }
+    .strokes div {
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+      padding-top: 42px;
+      width: 24%;
+    }
+    .strokes span {
+      height: 14px;
+      border-radius: 7px;
+      opacity: 0.45;
+    }
+
+    .pads {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      width: 52%;
+      margin: 0 auto;
+    }
+
+    /* כל פנקס מוטה לכיוון אחר */
+    .pad:nth-child(1) { --tilt: -1.2deg; }
+    .pad:nth-child(2) { --tilt: 1deg; }
+    .pad:nth-child(3) { --tilt: -0.7deg; }
+    .pad:nth-child(4) { --tilt: 1.4deg; }
+
+  </style>
+</head>
+<body>
+
+  <main class="board">
+    <div class="strokes">
+      <div>
+        <span style="background:#b9f0a8"></span>
+        <span style="background:#5b7fe0"></span>
+        <span style="background:#f7f08a"></span>
+        <span style="background:#f9c79a"></span>
+        <span style="background:#7f97e6"></span>
+        <span style="background:#f27fc2"></span>
+        <span style="background:#9fe39a"></span>
+        <span style="background:#f5a25c"></span>
+        <span style="background:#f6b6f0"></span>
+        <span style="background:#8fe3f0"></span>
+        <span style="background:#f9c79a"></span>
+        <span style="background:#9fe39a"></span>
+        <span style="background:#f7f08a"></span>
+        <span style="background:#5b7fe0"></span>
+        <span style="background:#c49ef0"></span>
+        <span style="background:#f6b6f0"></span>
+        <span style="background:#9fe39a"></span>
+        <span style="background:#f9c79a"></span>
+        <span style="background:#5b7fe0"></span>
+        <span style="background:#f7f08a"></span>
+      </div>
+      <div>
+        <span style="background:#7f8fe6"></span>
+        <span style="background:#c49ef0"></span>
+        <span style="background:#f27fd6"></span>
+        <span style="background:#6f9cf0"></span>
+        <span style="background:#9fe39a"></span>
+        <span style="background:#f6b6f0"></span>
+        <span style="background:#f7f08a"></span>
+        <span style="background:#b48ae6"></span>
+        <span style="background:#8fe3f0"></span>
+        <span style="background:#5b7fe0"></span>
+        <span style="background:#f6b6f0"></span>
+        <span style="background:#c49ef0"></span>
+        <span style="background:#f7f08a"></span>
+        <span style="background:#5b7fe0"></span>
+        <span style="background:#8fe3f0"></span>
+        <span style="background:#c49ef0"></span>
+        <span style="background:#f27fd6"></span>
+        <span style="background:#9fe39a"></span>
+        <span style="background:#6f9cf0"></span>
+        <span style="background:#f6b6f0"></span>
+      </div>
+    </div>
+
+    <div class="pads">
+      <section class="pad red">
+        <h2 contenteditable="plaintext-only" dir="auto" spellcheck="false" data-placeholder="title">to do list</h2>
+        <textarea dir="auto" spellcheck="false" aria-label="note"></textarea>
+      </section>
+
+      <section class="pad cyan">
+        <textarea dir="auto" spellcheck="false" aria-label="note"></textarea>
+      </section>
+
+      <section class="pad yellow">
+        <textarea dir="auto" spellcheck="false" aria-label="note"></textarea>
+      </section>
+
+      <section class="pad pink">
+        <textarea dir="auto" spellcheck="false" aria-label="note"></textarea>
+      </section>
+    </div>
+  </main>
+
+  <script src="notebook.js"></script>
+
+</body>
+</html>
